@@ -10,7 +10,7 @@ function setup() {
     
   //Checking If The Search Bar Is Empty.
     if (searchBar.value == "") {
-        root.innerHTML = `TYPE TO START SEARCH`;
+        root.innerHTML = `<h5>TYPE TO START SEARCH</h5>`;
     }
 
     //Checking The Value Input Box In Real-time.
