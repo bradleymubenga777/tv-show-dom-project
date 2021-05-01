@@ -7,11 +7,25 @@ let count = document.getElementById('count');
 let selectElement = document.getElementById('selectEpisodes');
 let episodeLength = 0;
 
-function setup() {
-  const allEpisodes = getAllEpisodes();
-  makePageForEpisodes(allEpisodes);
+var data = [];
 
-    //Checking The Value Input Box In Real-time.
+//Constant Variables
+const endPoint = 'https://api.tvmaze.com/shows/82/episodes';
+
+function setup() {
+/*   makePageForEpisodes(data); */
+    //Fetching Our Data From API
+    fetch(endPoint)
+    .then(res => res.json())
+    .then(data => {
+      displayAfterFetch(data)
+    })
+    .catch(error => console.log(error));
+
+
+    //Function That Displays The Card In The DOM After API Request Is Made
+    function displayAfterFetch(data){
+          //Checking The Value Input Box In Real-time.
     searchBar.addEventListener('input', (event) => {
       //Setting Our Search Term Value.
       searchTerm = event.target.value.toLowerCase();
@@ -33,7 +47,7 @@ function setup() {
       episodeLength = 0;
 
       //Filtering Through All Episodes To See If It Matches Search.
-      allEpisodes
+      data
       .filter((by) => {
         return (
           by.name.toLowerCase().includes(searchTerm) || by.summary.toLowerCase().includes(searchTerm)
@@ -50,14 +64,14 @@ function setup() {
         episodeCard.className = `card col-sm-12 col-md-12 col-lg-4 col-xl-4 m-2`;
         episodeCard.setAttribute(`style`, `width: 18rem`);
         
-        //Creating An Option For Each Episode.
+        console.log(data)  //Creating An Option For Each Episode.
         let selectItem = document.createElement(`option`);
         selectItem.setAttribute(`value`, `${episode.name}`);
             
         //Setting The Inner HTML Values For The Element Of Each Episode.
         episodeCard.innerHTML = `
           <h5 class="card-title text-center pt-2">${episode.name} - S${episode.season}E${episode.number}</h5>
-          <img src="${episode.image[`medium`]}" class="card-img-top img-fluid" alt="${episode.name} Episode Thumbnail">
+          <img src="${episode.image[`medium`]}" class="card-img-top img-fluid" width="250px" alt="${episode.name} Episode Thumbnail">
           <div class="card-body">
             ${episode.summary}
           </div>
@@ -81,7 +95,7 @@ function setup() {
       episodeLength = 0;
 
       //Filtering Through All Episodes To See If It Matches Search.
-      allEpisodes
+      data
       .filter((by) => {
         return (
           by.name.toLowerCase().includes(selectEpisode) || by.summary.toLowerCase().includes(selectEpisode)
@@ -121,11 +135,14 @@ function setup() {
       });
     }
 
+    //Function To Show All Episodes By Default
     const showEverything = () => {
       //Clearing All Elements In The Root.
       root.innerHTML = ``;
       episodeLength = 0;
-      allEpisodes.forEach(episode => {
+
+      //Looping Through Each And Every Episode.
+      data.forEach(episode => {
         //For Each Episode Increment Episode Number
         episodeLength++;
         
@@ -160,6 +177,7 @@ function setup() {
 
     //Checking If The Search Bar Is Empty.
     showEverything();
+    }
   }
 
 
